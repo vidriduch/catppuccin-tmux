@@ -85,6 +85,10 @@ main() {
   date_time="$(get_tmux_option "@catppuccin_date_time" "off")"
   readonly date_time
 
+  local k8_cluster
+  k8_cluster="$(get_tmux_option "@catppuccin_k8_cluster" "off")"
+  readonly k8_cluster
+
   # These variables are the defaults so that the setw and set calls are easier to parse.
   local show_directory
   readonly show_directory="#[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]$right_separator#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics]  #[fg=$thm_fg,bg=$thm_gray] #{b:pane_current_path} #{?client_prefix,#[fg=$thm_red]"
@@ -116,6 +120,9 @@ main() {
   local show_date_time
   readonly show_date_time="#[fg=$thm_blue,bg=$thm_gray]$right_separator#[fg=$thm_bg,bg=$thm_blue] #[fg=$thm_fg,bg=$thm_gray] $date_time "
 
+  local show_k8_cluster
+  readonly show_k8_cluster="#[fg=$thm_blue,bg=$thm_gray]$right_separator#[fg=$thm_bg,bg=$thm_blue]ﴱ #[fg=$thm_fg,bg=$thm_gray] #(kubectl config current-context) "
+
   # Right column 1 by default shows the Window name.
   local right_column1=$show_window
 
@@ -144,6 +151,10 @@ main() {
 
   if [[ "${date_time}" != "off" ]]; then
     right_column2=$right_column2$show_date_time
+  fi
+
+  if [[ "${k8_cluster}" != "off" && -n $(kubectl config current-context) ]]; then
+    right_column2=$show_k8_cluster$right_column2
   fi
 
   set status-left ""
